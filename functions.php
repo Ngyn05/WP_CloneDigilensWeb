@@ -15,6 +15,8 @@ require_once DIGILENS_THEME_DIR . '/inc/post-metaboxes.php';
 require_once DIGILENS_THEME_DIR . '/inc/products.php';
 require_once DIGILENS_THEME_DIR . '/inc/sitemap-robots.php';
 require_once DIGILENS_THEME_DIR . '/inc/schema.php';
+require_once DIGILENS_THEME_DIR . '/inc/seo.php';
+require_once DIGILENS_THEME_DIR . '/inc/yoast-meta.php';
 require_once DIGILENS_THEME_DIR . '/inc/floating-contact.php';
 
 add_action( 'after_setup_theme', function () {
@@ -47,54 +49,7 @@ add_filter( 'the_excerpt', function( $excerpt ) {
     return $excerpt;
 }, 99 );
 
-// Output Favicons in <head> for all dynamic pages
-add_action( 'wp_head', function () {
-    $icon_32    = get_template_directory_uri() . '/snapshot/wp-content/uploads/2025/06/New-Site-Icon-v3-150x150.png';
-    $icon_192   = get_template_directory_uri() . '/snapshot/wp-content/uploads/2025/06/New-Site-Icon-v3-300x300.png';
-    $icon_apple = get_template_directory_uri() . '/snapshot/wp-content/uploads/2025/06/New-Site-Icon-v3.png';
-    
-    echo '<link rel="icon" href="' . esc_url( $icon_32 ) . '" sizes="32x32" />' . "\n";
-    echo '<link rel="icon" href="' . esc_url( $icon_192 ) . '" sizes="192x192" />' . "\n";
-    echo '<link rel="apple-touch-icon" href="' . esc_url( $icon_apple ) . '" />' . "\n";
-    echo '<meta name="msapplication-TileImage" content="' . esc_url( $icon_apple ) . '" />' . "\n";
-}, 1 );
-
-// Prevent 403 / CORS on REST nonce checks and user preferences in frontend
-add_action( 'wp_ajax_nopriv_rest-nonce', function () {
-    wp_send_json( wp_create_nonce( 'wp_rest' ) );
-} );
-add_action( 'wp_ajax_rest-nonce', function () {
-    wp_send_json( wp_create_nonce( 'wp_rest' ) );
-} );
-
-// 1. Prevent 403 on /wp-json/wp/v2/users/me (including context=edit) for frontend visitors
-add_filter( 'rest_authentication_errors', function( $error ) {
-    if ( ! empty( $_SERVER['REQUEST_URI'] ) && strpos( $_SERVER['REQUEST_URI'], '/wp/v2/users/me' ) !== false ) {
-        return true;
-    }
-    return $error;
-}, 100 );
-
-add_filter( 'rest_pre_dispatch', function( $result, $server, $request ) {
-    if ( is_a( $request, 'WP_REST_Request' ) && strpos( $request->get_route(), '/wp/v2/users/me' ) !== false ) {
-        return new WP_REST_Response( array(
-            'id'                 => 1,
-            'name'               => 'Guest',
-            'url'                => '',
-            'description'        => '',
-            'link'               => home_url(),
-            'slug'               => 'guest',
-            'avatar_urls'        => array( '24' => '', '48' => '', '96' => '' ),
-            'meta'               => array(),
-            'roles'              => array( 'administrator' ),
-            'capabilities'       => (object) array( 'edit_posts' => true ),
-            'extra_capabilities' => (object) array(),
-        ), 200 );
-    }
-    return $result;
-}, 10, 3 );
-
-// 2. Disable WordPress emojis completely
+// Disable WordPress emojis completely
 remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
 remove_action( 'admin_print_scripts', 'print_emoji_detection_script' );
 remove_action( 'wp_print_styles', 'print_emoji_styles' );

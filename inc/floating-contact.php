@@ -570,7 +570,7 @@ function digilens_render_floating_contact_widget() {
                             </div>
                             <div>
                                 <strong style="color:#0f172a;display:block;margin-bottom:2px;">Điện thoại:</strong>
-                                <a href="tel:02473048700" style="color:#0284c7;text-decoration:none;font-weight:700;">024.7304.8700</a>
+                                <a href="tel:02473053268" style="color:#0284c7;text-decoration:none;font-weight:700;">024.7305.3268</a>
                             </div>
                         </div>
 
@@ -622,7 +622,7 @@ function digilens_render_floating_contact_widget() {
                             </div>
                             <div>
                                 <strong style="color:#0f172a;display:block;margin-bottom:2px;">Điện thoại:</strong>
-                                <a href="tel:02873048700" style="color:#0284c7;text-decoration:none;font-weight:700;">028.7304.8700</a>
+                                <a href="tel:02873053268" style="color:#0284c7;text-decoration:none;font-weight:700;">028.7305.3268</a>
                             </div>
                         </div>
 

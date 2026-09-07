@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="DigiLens Việt Nam">
+  <rect width="1200" height="630" fill="#071a2b"/>
+  <circle cx="1020" cy="90" r="300" fill="#00b0f0" opacity=".16"/>
+  <circle cx="1100" cy="560" r="260" fill="#00b0f0" opacity=".1"/>
+  <text x="90" y="290" font-family="Arial,Helvetica,sans-serif" font-size="126" font-weight="700" fill="#fff">Digi<tspan fill="#00b0f0">Lens</tspan></text>
+  <text x="96" y="385" font-family="Arial,Helvetica,sans-serif" font-size="46" fill="#fff">Công nghệ quang học tại Việt Nam</text>
+</svg>

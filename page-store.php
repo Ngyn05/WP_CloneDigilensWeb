@@ -945,11 +945,11 @@ get_header();
         <!-- 1. Hero Section -->
         <section class="dl-store-hero">
             <div class="dl-store-badge">
-                CHÍNH HÃNG DIGILENS • VIỆT NAM
+                SẢN PHẨM DIGILENS • VIỆT NAM
             </div>
             <h1 class="dl-store-title">SẢN PHẨM & CÔNG NGHỆ QUANG HỌC DIGILENS</h1>
             <p class="dl-store-subtitle">
-                Tìm hiểu các thiết bị kính thông minh ARGO™, thấu kính dẫn sóng Crystal™ và các giải pháp thực tế tăng cường (AR) chính hãng phục vụ doanh nghiệp và kỹ sư nghiên cứu.
+                Tìm hiểu các thiết bị kính thông minh ARGO™, thấu kính dẫn sóng Crystal™ và các giải pháp thực tế tăng cường (AR) được cung cấp tại Việt Nam cho doanh nghiệp và kỹ sư nghiên cứu.
             </p>
 
             <!-- Clean Stats Grid -->
@@ -1018,12 +1018,12 @@ get_header();
         <!-- 4. Quality Guarantee Bar -->
         <section class="dl-guarantee-bar">
             <div class="dl-guarantee-col">
-                <div class="dl-guarantee-heading">Chính Hãng DigiLens</div>
-                <div class="dl-guarantee-desc">100% thiết bị nhập khẩu chính ngạch từ DigiLens Inc. (Mỹ), đầy đủ CO/CQ và hóa đơn VAT.</div>
+                <div class="dl-guarantee-heading">Sản phẩm DigiLens</div>
+                <div class="dl-guarantee-desc">Thông tin nguồn hàng, hóa đơn và chứng từ đi kèm được xác nhận theo từng đơn hàng.</div>
             </div>
             <div class="dl-guarantee-col">
                 <div class="dl-guarantee-heading">Bảo Hành 24 Tháng</div>
-                <div class="dl-guarantee-desc">Bảo hành chính hãng 24 tháng, đổi mới linh kiện quang học và hỗ trợ kỹ thuật tận nơi.</div>
+                <div class="dl-guarantee-desc">Chính sách bảo hành 24 tháng, hỗ trợ linh kiện quang học và kỹ thuật tận nơi theo điều kiện áp dụng.</div>
             </div>
             <div class="dl-guarantee-col">
                 <div class="dl-guarantee-heading">Demo & Dùng Thử</div>

@@ -186,9 +186,9 @@ function digilens_build_complete_footer() {
                         <h4 class="dl-f-card-title">Văn phòng Hà Nội</h4>
                         <p class="dl-f-card-address">226 Đường Láng, Phường Thịnh Quang,<br>Quận Đống Đa, Hà Nội</p>
                         <div class="dl-f-card-hotline">
-                            <a href="tel:02473048700" class="dl-f-phone-link">
+                            <a href="tel:02473053268" class="dl-f-phone-link">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                                024.7304.8700
+                                024.7305.3268
                             </a>
                         </div>
                     </div>
@@ -204,9 +204,9 @@ function digilens_build_complete_footer() {
                         <h4 class="dl-f-card-title">Văn phòng Hồ Chí Minh</h4>
                         <p class="dl-f-card-address">137 Hòa Hưng, Phường Hòa Hưng,<br>TP. Hồ Chí Minh</p>
                         <div class="dl-f-card-hotline">
-                            <a href="tel:02873048700" class="dl-f-phone-link">
+                            <a href="tel:02873053268" class="dl-f-phone-link">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                                028.7304.8700
+                                028.7305.3268
                             </a>
                         </div>
                     </div>
@@ -368,17 +368,29 @@ function digilens_native_form_markup( $type = 'contact' ) {
     if ( $type === 'newsletter' ) {
         return $notice . '<form class="digilens-native-form" method="post" action="' . $action . '">' . $nonce .
             '<input type="hidden" name="action" value="digilens_newsletter">' .
-            '<label>Email<input type="email" name="email" required autocomplete="email"></label>' .
-            '<label class="dl-hp">Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label>' .
+            '<label for="dl-newsletter-email">Email</label><input id="dl-newsletter-email" type="email" name="email" required autocomplete="email" aria-required="true">' .
+            '<div class="dl-hp" aria-hidden="true"><label for="dl-newsletter-website">Không điền trường này</label><input id="dl-newsletter-website" type="text" name="website" tabindex="-1" autocomplete="off"></div>' .
             '<button type="submit">Đăng ký</button></form>';
     }
     return $notice . '<form class="digilens-native-form" method="post" action="' . $action . '">' . $nonce .
         '<input type="hidden" name="action" value="digilens_contact">' .
-        '<div class="dl-row"><label>Họ và tên<input type="text" name="name" required autocomplete="name"></label><label>Email<input type="email" name="email" required autocomplete="email"></label></div>' .
-        '<div class="dl-row"><label>Công ty<input type="text" name="company" autocomplete="organization"></label><label>Số điện thoại<input type="tel" name="phone" autocomplete="tel"></label></div>' .
-        '<label>Nội dung<textarea name="message" required></textarea></label>' .
-        '<label class="dl-hp">Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label>' .
+        '<div class="dl-row"><div><label for="dl-contact-name">Họ và tên</label><input id="dl-contact-name" type="text" name="name" required autocomplete="name" aria-required="true"></div><div><label for="dl-contact-email">Email</label><input id="dl-contact-email" type="email" name="email" required autocomplete="email" aria-required="true"></div></div>' .
+        '<div class="dl-row"><div><label for="dl-contact-company">Công ty</label><input id="dl-contact-company" type="text" name="company" autocomplete="organization"></div><div><label for="dl-contact-phone">Số điện thoại</label><input id="dl-contact-phone" type="tel" name="phone" autocomplete="tel"></div></div>' .
+        '<label for="dl-contact-message">Nội dung</label><textarea id="dl-contact-message" name="message" required aria-required="true"></textarea>' .
+        '<div class="dl-hp" aria-hidden="true"><label for="dl-contact-website">Không điền trường này</label><input id="dl-contact-website" type="text" name="website" tabindex="-1" autocomplete="off"></div>' .
         '<button type="submit">Gửi yêu cầu</button></form>';
+}
+
+function digilens_mark_duplicate_headings( $html ) {
+    $seen = array();
+    return preg_replace_callback( '#<h([1-6])\b([^>]*)>([\s\S]*?)</h\1>#i', function ( $match ) use ( &$seen ) {
+        $text = trim( preg_replace( '#\s+#u', ' ', wp_strip_all_tags( html_entity_decode( $match[3], ENT_QUOTES, 'UTF-8' ) ) ) );
+        if ( $text === '' ) { return $match[0]; }
+        $key = function_exists( 'mb_strtolower' ) ? mb_strtolower( $text, 'UTF-8' ) : strtolower( $text );
+        if ( ! isset( $seen[ $key ] ) ) { $seen[ $key ] = true; return $match[0]; }
+        $attrs = preg_replace( '#\sclass=("|\')(.*?)\1#i', '', $match[2] );
+        return '<div' . $attrs . ' class="dl-responsive-heading-clone" aria-hidden="true" role="presentation">' . $match[3] . '</div>';
+    }, $html );
 }
 
 function digilens_replace_hubspot_forms( $html ) {
@@ -409,9 +421,9 @@ function digilens_replace_contact_section( $html ) {
                 </div>
                 <h3 class="dl-office-title">Văn phòng Hà Nội</h3>
                 <div class="dl-office-address">226 Đường Láng, Phường Thịnh Quang, Quận Đống Đa, Hà Nội</div>
-                <a href="tel:02473048700" class="dl-office-phone">
+                <a href="tel:02473053268" class="dl-office-phone">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                    <span>024.7304.8700</span>
+                    <span>024.7305.3268</span>
                 </a>
                 <div class="dl-office-map-container">
                     <iframe 
@@ -433,9 +445,9 @@ function digilens_replace_contact_section( $html ) {
                 </div>
                 <h3 class="dl-office-title">Văn phòng Hồ Chí Minh</h3>
                 <div class="dl-office-address">137 Hòa Hưng, Phường Hòa Hưng, TP. Hồ Chí Minh</div>
-                <a href="tel:02873048700" class="dl-office-phone">
+                <a href="tel:02873053268" class="dl-office-phone">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                    <span>028.7304.8700</span>
+                    <span>028.7305.3268</span>
                 </a>
                 <div class="dl-office-map-container">
                     <iframe 
@@ -886,10 +898,43 @@ function digilens_standardize_all_emails( $html ) {
     // 2. Standardize all visible digilens email addresses in HTML text
     $html = preg_replace( '#\b[a-zA-Z0-9._%+-]+@(?:digilens|DigiLens)\.(?:com|vn)\b#i', 'contact@digilens.vn', $html );
 
+    // Standardize the Vietnam office phone numbers in visible copy and tel links.
+    $html = str_replace(
+        array( '024.7304.8700', '028.7304.8700', '02473048700', '02873048700' ),
+        array( '024.7305.3268', '028.7305.3268', '02473053268', '02873053268' ),
+        $html
+    );
+
+    return $html;
+}
+
+/** Correct prominent machine-translated copy and stale market references. */
+function digilens_localize_snapshot_copy( $html, $snapshot_rel ) {
+    $replacements = array(
+        'ARGO là kính thông minh tất cả trong một đầu tiên, <span style="color:#ff9933">AR thực thụ</span> kính thông minh' => 'ARGO™ — kính thông minh AR tất cả trong một dành cho doanh nghiệp',
+        'Thiết bị tất cả trong một đầu tiên, AR thực thụ kính thông minh' => 'Kính thông minh AR tất cả trong một dành cho doanh nghiệp',
+        'Thiết bị tất cả trong một đầu tiên, <span style="color:#ff9933">AR thực thụ</span> kính thông minh' => 'Kính thông minh AR tất cả trong một dành cho doanh nghiệp',
+        'Bạn nên trải nghiệm điều này' => 'Trải nghiệm ARGO™ trong công việc thực tế',
+        'Tương lai của Điện toán đeo được' => 'Tương lai của điện toán đeo',
+        'Mở rộng lực lượng lao động' => 'Kết nối và hỗ trợ lực lượng lao động',
+    );
+    $html = str_replace( array_keys( $replacements ), array_values( $replacements ), $html );
+
+    if ( trim( $snapshot_rel, '/' ) === 'terms-of-use/index.htm' ) {
+        $html = str_replace( 'truy cập và sử dụng digilens.com', 'truy cập và sử dụng digilens.vn', $html );
+        $html = str_replace(
+            'Các Điều khoản này được điều chỉnh bởi pháp luật California, với thẩm quyền xét xử độc quyền tại các tòa án thuộc Santa Clara County, California. Tranh chấp có thể phải giải quyết bằng trọng tài ràng buộc.',
+            'Đối với việc truy cập, giao dịch và dịch vụ được cung cấp trực tiếp trên digilens.vn tại Việt Nam, các Điều khoản này được điều chỉnh bởi pháp luật Việt Nam và tranh chấp được giải quyết tại cơ quan có thẩm quyền của Việt Nam. Các điều khoản riêng của DigiLens Inc. hoặc dịch vụ do DigiLens Inc. trực tiếp cung cấp có thể chịu sự điều chỉnh của pháp luật California; phạm vi đó sẽ được nêu rõ tại điều khoản áp dụng cho dịch vụ tương ứng.',
+            $html
+        );
+    }
     return $html;
 }
 
 function digilens_rewrite_snapshot_html( $html, $snapshot_rel ) {
+    if ( function_exists( 'digilens_clean_snapshot_seo' ) ) {
+        $html = digilens_clean_snapshot_seo( $html );
+    }
     $html = digilens_strip_cookie_consent( $html );
     $html = digilens_replace_entire_header( $html );
     $html = digilens_replace_entire_footer( $html );
@@ -898,6 +943,8 @@ function digilens_rewrite_snapshot_html( $html, $snapshot_rel ) {
     $html = digilens_replace_contact_section( $html );
     $html = digilens_inject_embedded_videos( $html );
     $html = digilens_standardize_all_emails( $html );
+    $html = digilens_localize_snapshot_copy( $html, $snapshot_rel );
+    $html = digilens_mark_duplicate_headings( $html );
     $html = digilens_fix_pagination( $html, $snapshot_rel );
 
     // 0. Strip broken speculation rules and emoji scripts from snapshot
@@ -906,21 +953,6 @@ function digilens_rewrite_snapshot_html( $html, $snapshot_rel ) {
 
     $head_safety_script = '<script>
     (function() {
-        if (window.wp && window.wp.apiFetch) {
-            try {
-                window.wp.apiFetch.use(function(options, next) {
-                    if (options && options.path && options.path.indexOf("/wp/v2/users/me") !== -1) {
-                        return Promise.resolve({ id: 1, name: "Guest", slug: "guest", capabilities: { edit_posts: true } });
-                    }
-                    return next(options).catch(function(err) {
-                        if (options && options.path && options.path.indexOf("/wp/v2/users/me") !== -1) {
-                            return { id: 1, name: "Guest", slug: "guest", capabilities: {} };
-                        }
-                        throw err;
-                    });
-                });
-            } catch(e) {}
-        }
         window.addEventListener("unhandledrejection", function(e) {
             if (e && e.reason && (e.reason.name === "ChunkLoadError" || (e.reason.message && e.reason.message.indexOf("ChunkLoadError") !== -1))) {
                 e.preventDefault();
@@ -1000,6 +1032,24 @@ function digilens_rewrite_snapshot_html( $html, $snapshot_rel ) {
         },
         $html
     );
+
+    // Add intrinsic dimensions to local images to prevent layout shifts.
+    $html = preg_replace_callback( '#<img\b[^>]*>#i', function ( $match ) {
+        $tag = $match[0];
+        if ( preg_match( '#\bwidth\s*=#i', $tag ) && preg_match( '#\bheight\s*=#i', $tag ) ) { return $tag; }
+        if ( ! preg_match( '#\bsrc\s*=["\']([^"\']+)["\']#i', $tag, $src_match ) ) { return $tag; }
+        $src_path  = (string) wp_parse_url( html_entity_decode( $src_match[1] ), PHP_URL_PATH );
+        $theme_uri = (string) wp_parse_url( DIGILENS_THEME_URI, PHP_URL_PATH );
+        if ( strpos( $src_path, $theme_uri . '/' ) !== 0 ) { return $tag; }
+        $file = DIGILENS_THEME_DIR . substr( $src_path, strlen( $theme_uri ) );
+        if ( ! is_file( $file ) ) { return $tag; }
+        $size = @getimagesize( $file );
+        if ( ! $size || empty( $size[0] ) || empty( $size[1] ) ) { return $tag; }
+        $attrs = '';
+        if ( ! preg_match( '#\bwidth\s*=#i', $tag ) ) { $attrs .= ' width="' . (int) $size[0] . '"'; }
+        if ( ! preg_match( '#\bheight\s*=#i', $tag ) ) { $attrs .= ' height="' . (int) $size[1] . '"'; }
+        return preg_replace( '#\s*/?>$#', $attrs . ' />', $tag );
+    }, $html );
 
     // Add WordPress hooks without replacing the captured document shell.
     ob_start(); wp_head(); $wp_head = ob_get_clean();

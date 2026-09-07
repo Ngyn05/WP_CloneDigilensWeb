@@ -13,6 +13,64 @@ Text Domain: digilens-snapshot
     --digilens-vn-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
+/* Semantic heading added to legacy snapshots that did not contain an H1. */
+.dl-seo-page-title {
+    max-width: 1200px;
+    margin: 32px auto 16px;
+    padding: 0 24px;
+    color: #071a2b;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    line-height: 1.12;
+}
+
+.dl-product-geo-summary {
+    max-width: 1200px;
+    margin: 42px auto 24px;
+    border: 1px solid #dbe7ef;
+    border-radius: 10px;
+    background: #f8fbfd;
+    color: #243746;
+    line-height: 1.65;
+    overflow: hidden;
+}
+
+.dl-product-geo-summary summary {
+    position: relative;
+    padding: 16px 52px 16px 18px;
+    color: #071a2b;
+    font-weight: 700;
+    cursor: pointer;
+    list-style: none;
+}
+
+.dl-product-geo-summary summary::-webkit-details-marker {
+    display: none;
+}
+
+.dl-product-geo-summary summary::after {
+    content: "+";
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    font-size: 1.35rem;
+    line-height: 1;
+    transform: translateY(-50%);
+}
+
+.dl-product-geo-summary[open] summary::after {
+    content: "−";
+}
+
+.dl-product-geo-summary-content {
+    padding: 16px 18px;
+    border-top: 1px solid #dbe7ef;
+    background: #fff;
+}
+
+.dl-product-geo-summary p:last-child {
+    margin-bottom: 0;
+}
+
 /* Ép font hệ thống hỗ trợ tiếng Việt toàn diện, khử lỗi vỡ chữ trên mọi phần tử */
 html,
 body,
@@ -1297,8 +1355,17 @@ section[data-id="1e89f056"] .elementor-element-24ec48a9 {
     font-size: 0.88rem !important;
     font-weight: 700 !important;
     color: #1e293b !important;
-    margin-bottom: 14px !important;
+    margin-bottom: 6px !important;
     gap: 6px !important;
+}
+
+.digilens-native-form .dl-row > div {
+    min-width: 0;
+}
+
+.digilens-native-form > input,
+.digilens-native-form > textarea {
+    margin-bottom: 14px !important;
 }
 
 .digilens-native-form input,
@@ -1525,6 +1592,53 @@ section[data-id="45d131d5"] .elementor-shape-bottom,
         height: auto;
     }
 
+    /* Prevent wide Elementor flex/grid children from being visually clipped. */
+    .elementor,
+    .elementor .e-con,
+    .elementor .e-con-inner,
+    .elementor .elementor-element,
+    .elementor .elementor-widget,
+    .elementor .elementor-widget-container,
+    .dl-single-hero,
+    .dl-single-hero > *,
+    .dl-single-visuals,
+    .dl-single-info {
+        min-width: 0 !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .elementor .elementor-heading-title,
+    .elementor p,
+    .dl-single-prod-wrapper h1,
+    .dl-single-prod-wrapper p,
+    .dl-single-prod-wrapper a {
+        overflow-wrap: anywhere;
+        word-break: normal;
+    }
+
+    /* Homepage's two feature cards must stack within the phone viewport. */
+    .elementor-25181,
+    .elementor-25181 > .elementor-element,
+    .elementor-25181 .elementor-element-0dd5199,
+    .elementor-25181 .elementor-element-0dd5199 > .e-con-inner,
+    .elementor-25181 .elementor-element-dc16292 {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    .elementor-25181 .elementor-element-0dd5199 > .e-con-inner {
+        flex-wrap: wrap !important;
+    }
+
+    .elementor-25181 .elementor-element-a57484b,
+    .elementor-25181 .elementor-element-7ff7849 {
+        width: 100% !important;
+        flex-basis: 100% !important;
+    }
+
     /* WooCommerce default tables / forms responsive fallback */
     .woocommerce table.shop_table {
         font-size: 0.85rem !important;
@@ -1549,4 +1663,3 @@ section[data-id="45d131d5"] .elementor-shape-bottom,
 .elementor-element-a363164 {
     display: none !important;
 }
-

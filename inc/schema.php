@@ -18,7 +18,7 @@ define( 'DIGILENS_SITE_URL',  'https://digilens.vn' );
 define( 'DIGILENS_ORG_NAME',  'DigiLens Việt Nam' );
 define( 'DIGILENS_ORG_ID',    'https://digilens.vn/#organization' );
 define( 'DIGILENS_SITE_ID',   'https://digilens.vn/#website' );
-define( 'DIGILENS_LOGO_URL',  'https://digilens.vn/wp-content/themes/digilens-theme/assets/images/logo.png' );
+define( 'DIGILENS_LOGO_URL',  'https://digilens.vn/wp-content/themes/digilens-theme/assets/images/digilens-logo.svg' );
 define( 'DIGILENS_FACEBOOK',  'https://www.facebook.com/digilensvietnam' );
 define( 'DIGILENS_LINKEDIN',  'https://www.linkedin.com/company/digilens' );
 
@@ -55,13 +55,14 @@ function digilens_output_all_schema(): void {
     global $post;
     $graph = [];
 
-    // 1. Organization + WebSite → chỉ trang chủ
-    if ( is_front_page() ) {
-        $graph[] = [
-            '@type'  => 'Organization',
+    // Organization is present in every graph so Product/Offer seller references
+    // always resolve on the same page (not only on the homepage).
+    $graph[] = [
+            '@type'  => 'OnlineStore',
             '@id'    => DIGILENS_ORG_ID,
             'name'   => DIGILENS_ORG_NAME,
             'url'    => DIGILENS_SITE_URL . '/',
+            'description' => 'Đơn vị cung cấp kính AR và giải pháp công nghệ quang học DigiLens tại Việt Nam.',
             'logo'   => [
                 '@type' => 'ImageObject',
                 'url'   => DIGILENS_LOGO_URL,
@@ -76,9 +77,20 @@ function digilens_output_all_schema(): void {
                 'contactType'       => 'customer service',
                 'availableLanguage' => 'Vietnamese',
                 'email'             => 'contact@digilens.vn',
+                'telephone'         => '+84-1900-638-400',
+            ],
+            'email'     => 'contact@digilens.vn',
+            'telephone' => '+84-1900-638-400',
+            'address'   => [
+                '@type'           => 'PostalAddress',
+                'streetAddress'   => '226 Đường Láng, Phường Thịnh Quang, Quận Đống Đa',
+                'addressLocality' => 'Hà Nội',
+                'addressCountry'  => 'VN',
             ],
         ];
 
+    // WebSite/site-name schema only belongs on the canonical homepage.
+    if ( is_front_page() ) {
         $graph[] = [
             '@type'         => 'WebSite',
             '@id'           => DIGILENS_SITE_ID,
@@ -253,6 +265,9 @@ function digilens_build_product_schema( int $post_id ): ?array {
     // Hình ảnh sản phẩm
     $image_id  = $product->get_image_id();
     $image_url = $image_id ? wp_get_attachment_url( $image_id ) : '';
+    if ( ! $image_url ) {
+        $image_url = (string) get_post_meta( $post_id, '_digilens_image_url', true );
+    }
 
     $schema = [
         '@type'       => 'Product',

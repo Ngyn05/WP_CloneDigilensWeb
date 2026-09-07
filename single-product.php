@@ -976,7 +976,7 @@ while ( have_posts() ) : the_post();
                 <!-- Guarantee Summary -->
                 <div class="dl-single-guarantee">
                     <div class="dl-guarantee-item">
-                        <span class="dl-guarantee-dot"></span> <strong>100% Chính hãng DigiLens</strong> — Nhập khẩu trực tiếp nguyên seal
+                        <span class="dl-guarantee-dot"></span> <strong>Sản phẩm DigiLens mới</strong> — Được cung cấp tại Việt Nam
                     </div>
                     <div class="dl-guarantee-item">
                         <span class="dl-guarantee-dot"></span> <strong>Bảo hành 24 tháng</strong> — Hỗ trợ kỹ thuật & đổi mới linh kiện
@@ -1045,6 +1045,14 @@ while ( have_posts() ) : the_post();
                 </div>
             <?php endif; ?>
         </section>
+
+        <details class="dl-product-geo-summary">
+            <summary>Thông tin cung cấp và hỗ trợ tại Việt Nam</summary>
+            <div class="dl-product-geo-summary-content">
+                <p><strong><?php the_title(); ?></strong> được DigiLens Việt Nam cung cấp tại Việt Nam. Khách hàng có thể yêu cầu báo giá trên website, liên hệ hotline 1900.63.8400 hoặc đến văn phòng DigiLens để được tư vấn.</p>
+                <p>Đơn vị bán và hỗ trợ: DigiLens Việt Nam · Tình trạng: <?php echo $in_stock ? 'Còn hàng' : 'Hết hàng'; ?> · Bảo hành: 24 tháng theo điều kiện áp dụng · Cập nhật: <?php echo esc_html( get_the_modified_date( 'd/m/Y', $p_id ) ); ?>.</p>
+            </div>
+        </details>
     </main>
 
     <!-- 4. Dedicated Quote Modal Window ("Cửa sổ báo giá") -->

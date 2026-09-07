@@ -440,7 +440,6 @@ function digilens_build_robots_txt() {
     $robots .= "Allow: /\n";
     $robots .= "Allow: /wp-admin/admin-ajax.php\n";
     $robots .= "Disallow: /wp-admin/\n";
-    $robots .= "Disallow: /wp-includes/\n";
     $robots .= "Disallow: /cart/\n";
     $robots .= "Disallow: /checkout/\n";
     $robots .= "Disallow: /my-account/\n";
@@ -450,6 +449,14 @@ function digilens_build_robots_txt() {
     $robots .= "Disallow: /*?*pr_paged=\n";
     $robots .= "Disallow: /*?*s=\n";
     $robots .= "Disallow: /xmlrpc.php\n\n";
+    $robots .= "User-agent: OAI-SearchBot\n";
+    $robots .= "Allow: /\n";
+    $robots .= "Disallow: /wp-admin/\n";
+    $robots .= "Disallow: /cart/\n";
+    $robots .= "Disallow: /checkout/\n";
+    $robots .= "Disallow: /my-account/\n\n";
+    $robots .= "User-agent: GPTBot\n";
+    $robots .= "Disallow: /\n\n";
     $robots .= "# XML Sitemap Location\n";
     $robots .= "Sitemap: " . esc_url( $sitemap_url ) . "\n";
 
@@ -485,7 +492,12 @@ add_action( 'template_redirect', function() {
     $path = trim( (string) wp_parse_url( $uri, PHP_URL_PATH ), '/' );
 
     // 1. XML Sitemap
-    if ( $path === 'sitemap.xml' || $path === 'sitemap_index.xml' || $path === 'wp-sitemap.xml' ) {
+    if ( $path === 'sitemap_index.xml' || $path === 'wp-sitemap.xml' ) {
+        wp_safe_redirect( home_url( '/sitemap.xml' ), 301 );
+        exit;
+    }
+
+    if ( $path === 'sitemap.xml' ) {
         header( 'Content-Type: application/xml; charset=UTF-8' );
         header( 'X-Robots-Tag: noindex, follow', true );
         status_header( 200 );
@@ -518,7 +530,20 @@ add_action( 'init', function() {
     add_rewrite_rule( '^sitemap_index\.xml$', 'index.php?digilens_sitemap=1', 'top' );
     add_rewrite_rule( '^sitemap\.xsl$', 'index.php?digilens_sitemap_xsl=1', 'top' );
     add_rewrite_rule( '^robots\.txt$', 'index.php?digilens_robots=1', 'top' );
-} );
+}, -900 );
+
+// Use one sitemap engine and one canonical sitemap URL.
+add_filter( 'wpseo_enable_xml_sitemap', '__return_false', 1000 );
+
+// Yoast can intercept its legacy sitemap routes before template_redirect.
+// Canonicalize every alternate XML sitemap endpoint at parse time.
+add_action( 'parse_request', function() {
+    $path = trim( (string) wp_parse_url( $_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH ), '/' );
+    if ( $path !== 'sitemap.xml' && preg_match( '#^(?:wp-sitemap|sitemap_index|[a-z0-9_-]+-sitemap)\.xml$#i', $path ) ) {
+        wp_safe_redirect( home_url( '/sitemap.xml' ), 301 );
+        exit;
+    }
+}, -1000 );
 
 add_filter( 'query_vars', function( $vars ) {
     $vars[] = 'digilens_sitemap';
@@ -533,3 +558,13 @@ add_filter( 'query_vars', function( $vars ) {
 add_action( 'save_post', 'digilens_update_physical_seo_files' );
 add_action( 'delete_post', 'digilens_update_physical_seo_files' );
 add_action( 'woocommerce_update_product', 'digilens_update_physical_seo_files' );
+
+// Refresh static SEO files once when this engine version changes. Static files
+// are served by Nginx before WordPress, so relying only on runtime routes would
+// leave old robots/sitemap rules active after a theme deployment.
+add_action( 'init', function() {
+    $engine_version = '2026-08-28.2';
+    if ( get_option( 'digilens_seo_files_version' ) === $engine_version ) { return; }
+    digilens_update_physical_seo_files();
+    update_option( 'digilens_seo_files_version', $engine_version, false );
+}, 100 );

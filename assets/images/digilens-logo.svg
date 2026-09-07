@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 160" role="img" aria-label="DigiLens Việt Nam">
+  <rect width="640" height="160" rx="20" fill="#071a2b"/>
+  <text x="42" y="103" font-family="Arial,Helvetica,sans-serif" font-size="76" font-weight="700" fill="#fff">Digi<tspan fill="#00b0f0">Lens</tspan></text>
+  <text x="470" y="101" font-family="Arial,Helvetica,sans-serif" font-size="25" font-weight="700" fill="#fff">VIỆT NAM</text>
+</svg>

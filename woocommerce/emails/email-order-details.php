@@ -22,47 +22,31 @@ $order_date = $order->get_date_created() ? $order->get_date_created()->date_i18n
             <tr style="background: #f8fafc; color: #334155;">
                 <th scope="col" style="text-align:<?php echo esc_attr( $text_align ); ?>; padding: 10px 12px; font-size: 13px; font-weight: 700; border: 1px solid #e2e8f0;">Sản phẩm / Yêu cầu</th>
                 <th scope="col" style="text-align:center; padding: 10px 12px; font-size: 13px; font-weight: 700; border: 1px solid #e2e8f0; width: 70px;">SL</th>
-                <th scope="col" style="text-align:right; padding: 10px 12px; font-size: 13px; font-weight: 700; border: 1px solid #e2e8f0; width: 110px;">Đơn giá</th>
             </tr>
         </thead>
         <tbody>
             <?php
-            echo wc_get_email_order_items(
-                $order,
-                array(
-                    'show_sku'      => false,
-                    'show_image'    => false,
-                    'image_size'    => array( 0, 0 ),
-                    'plain_text'    => $plain_text,
-                    'sent_to_admin' => $sent_to_admin,
-                )
-            );
+            foreach ( $order->get_items() as $item ) {
+                ?>
+                <tr>
+                    <td style="text-align:<?php echo esc_attr( $text_align ); ?>; border: 1px solid #e2e8f0; padding: 10px 12px; font-size: 13px; color: #0f172a;">
+                        <?php echo esc_html( $item->get_name() ); ?>
+                        <?php do_action( 'woocommerce_order_item_meta_start', $item->get_id(), $item, $order, $plain_text ); ?>
+                        <?php wc_display_item_meta( $item, array( 'label_before' => '<div style="font-size:12px;color:#64748b;">', 'label_after' => ': ', 'separator' => '<br>', 'echo' => true ) ); ?>
+                        <?php do_action( 'woocommerce_order_item_meta_end', $item->get_id(), $item, $order, $plain_text ); ?>
+                    </td>
+                    <td style="text-align:center; border: 1px solid #e2e8f0; padding: 10px 12px; font-size: 13px; color: #334155;"><?php echo esc_html( $item->get_quantity() ); ?></td>
+                </tr>
+                <?php
+            }
             ?>
         </tbody>
         <tfoot>
             <?php
-            $totals = $order->get_order_item_totals();
-            if ( $totals ) {
-                $i = 0;
-                foreach ( $totals as $total ) {
-                    $i++;
-                    $label = $total['label'];
-                    if ( stripos( $label, 'Subtotal' ) !== false ) { $label = 'Tạm tính:'; }
-                    elseif ( stripos( $label, 'Total' ) !== false ) { $label = 'Tổng cộng:'; }
-                    elseif ( stripos( $label, 'Payment' ) !== false ) { $label = 'Phương thức:'; }
-                    ?>
-                    <tr style="background: <?php echo ( $i % 2 === 0 ) ? '#f8fafc' : '#ffffff'; ?>;">
-                        <th scope="row" colspan="2" style="text-align:<?php echo esc_attr( $text_align ); ?>; border: 1px solid #e2e8f0; padding: 8px 12px; font-size: 13px; font-weight: 600; color: #475569;"><?php echo esc_html( $label ); ?></th>
-                        <td style="text-align:right; border: 1px solid #e2e8f0; padding: 8px 12px; font-size: 13px; font-weight: 700; color: #0f172a;"><?php echo wp_kses_post( $total['value'] ); ?></td>
-                    </tr>
-                    <?php
-                }
-            }
             if ( $order->get_customer_note() ) {
                 ?>
                 <tr>
-                    <th scope="row" colspan="2" style="text-align:<?php echo esc_attr( $text_align ); ?>; border: 1px solid #e2e8f0; padding: 10px 12px; font-size: 13px; font-weight: 700; color: #0284c7;">Ghi chú & Thông tin khách:</th>
-                    <td style="text-align:left; border: 1px solid #e2e8f0; padding: 10px 12px; font-size: 12px; color: #334155; line-height: 1.5;"><?php echo wp_kses_post( nl2br( wptexturize( $order->get_customer_note() ) ) ); ?></td>
+                    <td colspan="2" style="text-align:left; border: 1px solid #e2e8f0; padding: 10px 12px; font-size: 12px; color: #334155; line-height: 1.5;"><strong style="color:#0284c7;">Ghi chú &amp; Thông tin khách:</strong><br><?php echo wp_kses_post( nl2br( wptexturize( $order->get_customer_note() ) ) ); ?></td>
                 </tr>
                 <?php
             }
