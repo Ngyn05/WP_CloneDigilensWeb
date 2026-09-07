@@ -210,8 +210,8 @@ function digilens_build_sitemap_xsl() {
     $site_url  = home_url( '/' );
 
     $xsl = '<?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="2.0"
-                xmlns:html="http://www.w3.org/TR/REC-html40"
+<xsl:stylesheet version="1.0"
+                xmlns:html="http://www.w3.org/1999/xhtml"
                 xmlns:sitemap="http://www.sitemaps.org/schemas/sitemap/0.9"
                 xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
@@ -427,10 +427,13 @@ function digilens_build_sitemap_xsl() {
 /**
  * Generate Robots.txt content.
  *
+/**
+ * Generate Robots.txt content using Yoast SEO sitemap index.
+ *
  * @return string
  */
 function digilens_build_robots_txt() {
-    $sitemap_url = home_url( '/sitemap.xml' );
+    $sitemap_url = home_url( '/sitemap_index.xml' );
     
     $robots  = "# =========================================\n";
     $robots .= "# DigiLens Vietnam - Robots.txt Rules\n";
@@ -457,22 +460,23 @@ function digilens_build_robots_txt() {
     $robots .= "Disallow: /my-account/\n\n";
     $robots .= "User-agent: GPTBot\n";
     $robots .= "Disallow: /\n\n";
-    $robots .= "# XML Sitemap Location\n";
+    $robots .= "# XML Sitemap Location (Yoast SEO)\n";
     $robots .= "Sitemap: " . esc_url( $sitemap_url ) . "\n";
 
     return $robots;
 }
 
 /**
- * Write static sitemap.xml and robots.txt to web root if writable.
+ * Remove legacy physical sitemap.xml to avoid blocking Yoast dynamic routes.
  */
-function digilens_update_physical_seo_files() {
+function digilens_clean_physical_sitemap_file() {
     $root_path = ABSPATH;
     if ( ! empty( $root_path ) && is_dir( $root_path ) ) {
         $sitemap_file = trailingslashit( $root_path ) . 'sitemap.xml';
-        $robots_file  = trailingslashit( $root_path ) . 'robots.txt';
-
-        @file_put_contents( $sitemap_file, digilens_build_sitemap_xml() );
+        if ( file_exists( $sitemap_file ) ) {
+            @unlink( $sitemap_file );
+        }
+        $robots_file = trailingslashit( $root_path ) . 'robots.txt';
         @file_put_contents( $robots_file, digilens_build_robots_txt() );
     }
 }
@@ -485,36 +489,23 @@ add_filter( 'robots_txt', function( $output, $public ) {
 }, 999, 2 );
 
 /**
- * Handle direct template requests for /sitemap.xml, /sitemap_index.xml, /sitemap.xsl, /robots.txt
+ * Handle direct template requests for /robots.txt and forward /sitemap.xml to Yoast /sitemap_index.xml
  */
 add_action( 'template_redirect', function() {
     $uri = isset( $_SERVER['REQUEST_URI'] ) ? (string) $_SERVER['REQUEST_URI'] : '';
     $path = trim( (string) wp_parse_url( $uri, PHP_URL_PATH ), '/' );
 
-    // 1. XML Sitemap
-    if ( $path === 'sitemap_index.xml' || $path === 'wp-sitemap.xml' ) {
-        wp_safe_redirect( home_url( '/sitemap.xml' ), 301 );
+    // Redirect /sitemap.xml and /wp-sitemap.xml to Yoast /sitemap_index.xml
+    if ( $path === 'sitemap.xml' || $path === 'wp-sitemap.xml' || $path === 'sitemap_xml' ) {
+        wp_safe_redirect( home_url( '/sitemap_index.xml' ), 301 );
         exit;
     }
 
-    if ( $path === 'sitemap.xml' ) {
-        header( 'Content-Type: application/xml; charset=UTF-8' );
-        header( 'X-Robots-Tag: noindex, follow', true );
-        status_header( 200 );
-        echo digilens_build_sitemap_xml();
-        exit;
-    }
-
-    // 2. XSL Stylesheet
-    if ( $path === 'sitemap.xsl' ) {
-        header( 'Content-Type: application/xml; charset=UTF-8' );
-        status_header( 200 );
-        echo digilens_build_sitemap_xsl();
-        exit;
-    }
-
-    // 3. Robots.txt
+    // Robots.txt
     if ( $path === 'robots.txt' ) {
+        while ( ob_get_level() > 0 ) {
+            @ob_end_clean();
+        }
         header( 'Content-Type: text/plain; charset=UTF-8' );
         status_header( 200 );
         echo digilens_build_robots_txt();
@@ -523,48 +514,21 @@ add_action( 'template_redirect', function() {
 }, -9999 );
 
 /**
- * Register rewrite rules for XML sitemap & robots
+ * Register rewrite rules for robots
  */
 add_action( 'init', function() {
-    add_rewrite_rule( '^sitemap\.xml$', 'index.php?digilens_sitemap=1', 'top' );
-    add_rewrite_rule( '^sitemap_index\.xml$', 'index.php?digilens_sitemap=1', 'top' );
-    add_rewrite_rule( '^sitemap\.xsl$', 'index.php?digilens_sitemap_xsl=1', 'top' );
     add_rewrite_rule( '^robots\.txt$', 'index.php?digilens_robots=1', 'top' );
 }, -900 );
 
-// Use one sitemap engine and one canonical sitemap URL.
-add_filter( 'wpseo_enable_xml_sitemap', '__return_false', 1000 );
-
-// Yoast can intercept its legacy sitemap routes before template_redirect.
-// Canonicalize every alternate XML sitemap endpoint at parse time.
-add_action( 'parse_request', function() {
-    $path = trim( (string) wp_parse_url( $_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH ), '/' );
-    if ( $path !== 'sitemap.xml' && preg_match( '#^(?:wp-sitemap|sitemap_index|[a-z0-9_-]+-sitemap)\.xml$#i', $path ) ) {
-        wp_safe_redirect( home_url( '/sitemap.xml' ), 301 );
-        exit;
-    }
-}, -1000 );
-
 add_filter( 'query_vars', function( $vars ) {
-    $vars[] = 'digilens_sitemap';
-    $vars[] = 'digilens_sitemap_xsl';
     $vars[] = 'digilens_robots';
     return $vars;
 } );
 
-/**
- * Automatically update static files on post/page/product save or delete.
- */
-add_action( 'save_post', 'digilens_update_physical_seo_files' );
-add_action( 'delete_post', 'digilens_update_physical_seo_files' );
-add_action( 'woocommerce_update_product', 'digilens_update_physical_seo_files' );
-
-// Refresh static SEO files once when this engine version changes. Static files
-// are served by Nginx before WordPress, so relying only on runtime routes would
-// leave old robots/sitemap rules active after a theme deployment.
+// Clean legacy static sitemap file once on initialization
 add_action( 'init', function() {
-    $engine_version = '2026-08-28.2';
+    $engine_version = '2026-09-07.yoast';
     if ( get_option( 'digilens_seo_files_version' ) === $engine_version ) { return; }
-    digilens_update_physical_seo_files();
+    digilens_clean_physical_sitemap_file();
     update_option( 'digilens_seo_files_version', $engine_version, false );
 }, 100 );
